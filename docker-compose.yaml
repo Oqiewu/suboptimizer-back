@@ -1,0 +1,36 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - database
+    environment:
+      - SYMFONY_ENV=dev
+      - DATABASE_URL=${DATABASE_URL}
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - php
+    ports:
+      - "8080:80"
+  database:
+    image: mysql:8.0
+    volumes:
+      - suboptimizer_db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+
+volumes:
+  suboptimizer_db:
