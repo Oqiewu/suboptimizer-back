@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Service;
+
+use App\Entity\RefreshToken;
+use App\Entity\User;
+use App\Repository\RefreshTokenRepository;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use DateMalformedStringException;
+use Random\RandomException;
+
+class RefreshTokenService
+{
+    private JWTTokenManagerInterface $JWTTokenManager;
+    private EntityManagerInterface $entityManager;
+    private RefreshTokenRepository $refreshTokenRepository;
+
+    public function __construct(
+        JWTTokenManagerInterface $JWTTokenManager,
+        EntityManagerInterface $entityManager,
+        RefreshTokenRepository $refreshTokenRepository,
+        UserRepository $userRepository
+    ) {
+        $this->JWTTokenManager = $JWTTokenManager;
+        $this->entityManager = $entityManager;
+        $this->refreshTokenRepository = $refreshTokenRepository;
+    }
+
+    /**
+     * @param User $user
+     * @param int $refreshTtl
+     * @return string
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
+    public function createRefreshToken(User $user, int $refreshTtl): string
+    {
+        $validAt = new \DateTime();
+        $validAt->modify('+' . $refreshTtl . ' seconds');
+
+        $token = bin2hex(random_bytes(64));
+        $refreshToken = new RefreshToken($user, $token, $validAt);
+
+        $this->entityManager->persist($refreshToken);
+        $this->entityManager->flush();
+
+        return $token;
+    }
+
+    /**
+     * Обновление access token с использованием refresh token
+     *
+     * @param string $refreshToken
+     * @return string
+     * @throws BadCredentialsException
+     */
+    public function refreshAccessToken(string $refreshToken): string
+    {
+        $storedToken = $this->refreshTokenRepository->findByToken($refreshToken);
+
+        if (!$storedToken || $storedToken->getValidAt() < new \DateTime()) {
+            throw new BadCredentialsException('Invalid or expired refresh token.');
+        }
+
+        $user = $storedToken->getUser();
+        return $this->JWTTokenManager->create($user);
+    }
+}
