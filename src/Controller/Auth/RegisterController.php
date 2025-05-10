@@ -66,12 +66,12 @@ final class RegisterController extends AbstractController
                 'result' => [
                     'accessToken' => [
                         'token' => $accessToken,
-                        'createdAt' => time(),
+                        'createdAt' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
                         'ttl' => $this->getParameter('lexik_jwt_authentication.token_ttl'),
                     ],
                     'refreshToken' => [
                         'token' => $refreshToken,
-                        'createdAt' => time(),
+                        'createdAt' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
                         'ttl' => $refreshTtl,
                     ],
                 ]
