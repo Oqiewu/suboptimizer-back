@@ -66,4 +66,14 @@ class RefreshTokenService
         $user = $storedToken->getUser();
         return $this->JWTTokenManager->create($user);
     }
+
+    public function removeExistingRefreshToken(User $user): void
+    {
+        $token = $this->refreshTokenRepository->findOneBy(['user' => $user]);
+
+        if ($token) {
+            $this->entityManager->remove($token);
+            $this->entityManager->flush();
+        }
+    }
 }

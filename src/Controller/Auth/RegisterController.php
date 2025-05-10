@@ -57,6 +57,7 @@ final class RegisterController extends AbstractController
                 ? $this->getParameter('gesdinet_jwt_refresh_token.ttl')
                 : 0;
 
+            $this->refreshTokenService->removeExistingRefreshToken($user);
             $refreshToken = $this->refreshTokenService->createRefreshToken($user, $refreshTtl);
 
             return $this->json([

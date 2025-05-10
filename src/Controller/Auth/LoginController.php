@@ -51,6 +51,8 @@ class LoginController extends AbstractController
             : $this->getParameter('lexik_jwt_authentication.token_ttl');
 
         $accessToken = $this->JWTTokenManager->create($user);
+
+        $this->refreshTokenService->removeExistingRefreshToken($user);
         $refreshToken = $this->refreshTokenService->createRefreshToken($user, $refreshTtl);
 
         return $this->json([

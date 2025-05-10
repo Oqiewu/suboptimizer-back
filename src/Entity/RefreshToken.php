@@ -20,8 +20,8 @@ class RefreshToken
     #[ORM\Column(type: 'datetime')]
     private \DateTime $validAt;
 
-    #[ORM\ManyToOne(targetEntity: 'App\Entity\User', cascade: ['remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: 'App\Entity\User')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private User $user;
     public function __construct(User $user, string $token, \DateTime $validAt)
     {
