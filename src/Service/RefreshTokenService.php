@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Entity\RefreshToken;
 use App\Entity\User;
 use App\Repository\RefreshTokenRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
@@ -22,7 +21,6 @@ class RefreshTokenService
         JWTTokenManagerInterface $JWTTokenManager,
         EntityManagerInterface $entityManager,
         RefreshTokenRepository $refreshTokenRepository,
-        UserRepository $userRepository
     ) {
         $this->JWTTokenManager = $JWTTokenManager;
         $this->entityManager = $entityManager;

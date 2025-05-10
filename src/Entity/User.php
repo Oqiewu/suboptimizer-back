@@ -11,7 +11,7 @@ use App\Repository\UserRepository;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-#[ORM\Table(name: '"user"')]
+#[ORM\Table(name: 'user')]
 #[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -25,7 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email]
     private string $email;
 
-    #[ORM\Column(name: 'avatar_url', type: 'string', length: 512)]
+    #[ORM\Column(name: 'avatar_url', type: 'string', length: 512, nullable: true)]
     #[Assert\NotBlank]
     private string $avatarUrl;
 

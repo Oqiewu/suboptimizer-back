@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\RefreshTokenRepository;
 
 #[ORM\Entity(repositoryClass: RefreshTokenRepository::class)]
-#[ORM\Table(name: '"refresh_token"')]
+#[ORM\Table(name: 'refresh_token')]
 class RefreshToken
 {
     #[ORM\Id()]
@@ -20,7 +20,7 @@ class RefreshToken
     #[ORM\Column(type: 'datetime')]
     private \DateTime $validAt;
 
-    #[ORM\ManyToOne(targetEntity: 'App\Entity\User')]
+    #[ORM\ManyToOne(targetEntity: 'App\Entity\User', cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private User $user;
     public function __construct(User $user, string $token, \DateTime $validAt)
