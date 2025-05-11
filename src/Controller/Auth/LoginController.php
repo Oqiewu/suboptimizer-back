@@ -2,7 +2,6 @@
 
 namespace App\Controller\Auth;
 
-use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\RefreshTokenService;
 use App\Controller\Auth\DTO\LoginRequestDTO;

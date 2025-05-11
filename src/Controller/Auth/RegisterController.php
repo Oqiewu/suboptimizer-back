@@ -6,10 +6,8 @@ use App\Controller\Auth\DTO\RegisterRequestDTO;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\RefreshTokenService;
-use DateMalformedStringException;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Random\RandomException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,10 +26,6 @@ final class RegisterController extends AbstractController
         private readonly RefreshTokenService $refreshTokenService,
     ) {}
 
-    /**
-     * @throws RandomException
-     * @throws DateMalformedStringException
-     */
     #[Route('/register', name: 'auth_register', methods: ['POST'])]
     public function __invoke(
         #[MapRequestPayload] RegisterRequestDTO $dto,
