@@ -4,17 +4,18 @@ namespace App\Service\Auth;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class RegisterService
+class AuthService
 {
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
-    ) {}
+    )
+    {}
 
-    public function getRefreshTtl(bool $is_remember): int
+    public function getRefreshTtl(bool $isRemember): int
     {
-        return $is_remember
+        return $isRemember
             ? $this->parameterBag->get('gesdinet_jwt_refresh_token.ttl')
-            : 0;
+            : $this->parameterBag->get('lexik_jwt_authentication.token_ttl');
     }
 
     public function collectResponseArray(string $accessToken, string $refreshToken, int $refreshTtl): array
@@ -23,7 +24,7 @@ class RegisterService
             'accessToken' => [
                 'token' => $accessToken,
                 'createdAt' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
-                'ttl' => $this->parameterBag->get('lexik_jwt_authentication.token_ttl')
+                'ttl' => $this->parameterBag->get('lexik_jwt_authentication.token_ttl'),
             ],
             'refreshToken' => [
                 'token' => $refreshToken,

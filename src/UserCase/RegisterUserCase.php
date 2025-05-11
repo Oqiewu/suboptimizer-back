@@ -5,7 +5,7 @@ namespace App\UserCase;
 use App\Controller\Auth\DTO\RegisterRequestDTO;
 use App\Entity\User;
 use App\Repository\UserRepository;
-use App\Service\Auth\RegisterService;
+use App\Service\Auth\AuthService;
 use App\Service\RefreshTokenService;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -20,7 +20,7 @@ class RegisterUserCase
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly JWTTokenManagerInterface $JWTTokenManager,
         private readonly RefreshTokenService $refreshTokenService,
-        private readonly RegisterService $registerService,
+        private readonly AuthService $authService,
     ) {}
 
     public function register(RegisterRequestDTO $dto): array
@@ -41,13 +41,13 @@ class RegisterUserCase
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
-            $refreshTtl = $this->registerService->getRefreshTtl($dto->is_remember);
+            $refreshTtl = $this->authService->getRefreshTtl($dto->is_remember);
             $accessToken = $this->JWTTokenManager->create($user);
 
             $this->refreshTokenService->removeExistingRefreshToken($user);
             $refreshToken = $this->refreshTokenService->createRefreshToken($user, $refreshTtl);
 
-            return $this->registerService->collectResponseArray($accessToken, $refreshToken, $refreshTtl);
+            return $this->authService->collectResponseArray($accessToken, $refreshToken, $refreshTtl);
         } catch (\Throwable $e) {
             if ($this->entityManager->contains($user)) {
                 $this->entityManager->remove($user);
