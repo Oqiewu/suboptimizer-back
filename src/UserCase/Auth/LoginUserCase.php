@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserCase;
+namespace App\UserCase\Auth;
 
 use App\Controller\Auth\DTO\LoginRequestDTO;
 use App\Repository\UserRepository;

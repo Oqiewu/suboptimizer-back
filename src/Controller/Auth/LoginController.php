@@ -3,11 +3,11 @@
 namespace App\Controller\Auth;
 
 use App\Controller\Auth\DTO\LoginRequestDTO;
-use App\UserCase\LoginUserCase;
+use App\UserCase\Auth\LoginUserCase;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/auth')]
 class LoginController extends AbstractController
