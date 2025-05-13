@@ -13,19 +13,11 @@ use Random\RandomException;
 
 class RefreshTokenService
 {
-    private JWTTokenManagerInterface $JWTTokenManager;
-    private EntityManagerInterface $entityManager;
-    private RefreshTokenRepository $refreshTokenRepository;
-
     public function __construct(
-        JWTTokenManagerInterface $JWTTokenManager,
-        EntityManagerInterface $entityManager,
-        RefreshTokenRepository $refreshTokenRepository,
-    ) {
-        $this->JWTTokenManager = $JWTTokenManager;
-        $this->entityManager = $entityManager;
-        $this->refreshTokenRepository = $refreshTokenRepository;
-    }
+        private readonly JWTTokenManagerInterface $JWTTokenManager,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly RefreshTokenRepository $refreshTokenRepository,
+    ) {}
 
     /**
      * @param User $user
