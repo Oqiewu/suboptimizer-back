@@ -24,13 +24,15 @@ readonly final class CreateUserService implements CreateUserServiceInterface
      */
     public function createUser(CreateUserDTOInterface $createUserDTO): UserInterface
     {
-        if ($this->userRepository->findOneBy(['email' => $createUserDTO->getEmail()])) {
+        $email = $createUserDTO->getEmail();
+
+        if ($this->userRepository->findOneBy(['email' => $email])) {
             throw new ConflictHttpException('User already exists.');
         }
 
         $user = new User();
         $user
-            ->setEmail($createUserDTO->getEmail())
+            ->setEmail($email)
             ->setPassword($this->passwordHasher->hashPassword($user, $createUserDTO->getPassword()))
             ->setFirstName($createUserDTO->getFirstName())
             ->setLastName($createUserDTO->getLastName())
