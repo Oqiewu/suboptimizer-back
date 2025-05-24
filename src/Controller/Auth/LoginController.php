@@ -18,9 +18,6 @@ class LoginController extends AbstractController
         private readonly LoginUserCase $loginUserCase,
     ) {}
 
-    /**
-     * @throws \Exception
-     */
     #[Route('/login', name: 'auth_login', methods: ['POST'])]
     public function __invoke(
         #[MapRequestPayload] LoginRequestDTO $loginRequestDTO
@@ -33,7 +30,7 @@ class LoginController extends AbstractController
                 'message' => 'success',
                 'result' => $result,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->json([
                 'code' => $e->getCode() ?: 500,
                 'message' => $e->getMessage(),

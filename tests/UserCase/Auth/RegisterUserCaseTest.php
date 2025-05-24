@@ -57,12 +57,13 @@ class RegisterUserCaseTest extends TestCase
      */
     public function testRegisterSuccess(): void
     {
-        $dto = new RegisterRequestDTO();
-        $dto->email = 'test@example.com';
-        $dto->password = 'securepass';
-        $dto->first_name = 'John';
-        $dto->last_name = 'Doe';
-        $dto->is_remember = true;
+        $dto = new RegisterRequestDTO(
+            email: 'test@example.com',
+            first_name: 'John',
+            last_name: 'Doe',
+            password: 'securepass',
+            is_remember: true
+        );
 
         $this->userRepository
             ->expects($this->once())
@@ -120,12 +121,13 @@ class RegisterUserCaseTest extends TestCase
      */
     public function testRegisterUserAlreadyExists(): void
     {
-        $dto = new RegisterRequestDTO();
-        $dto->email = 'existing@example.com';
-        $dto->password = 'securepass';
-        $dto->first_name = 'Jane';
-        $dto->last_name = 'Smith';
-        $dto->is_remember = false;
+        $dto = new RegisterRequestDTO(
+            email: 'existing@example.com',
+            first_name: 'Jane',
+            last_name: 'Smith',
+            password: 'securepass',
+            is_remember: false
+        );
 
         $this->userRepository
             ->expects($this->once())
@@ -144,12 +146,13 @@ class RegisterUserCaseTest extends TestCase
      */
     public function testRegisterWithExceptionDuringFlush(): void
     {
-        $dto = new RegisterRequestDTO();
-        $dto->email = 'fail@example.com';
-        $dto->password = 'securepass';
-        $dto->first_name = 'Fail';
-        $dto->last_name = 'Case';
-        $dto->is_remember = false;
+        $dto = new RegisterRequestDTO(
+            email: 'fail@example.com',
+            first_name: 'Fail',
+            last_name: 'Case',
+            password: 'securepass',
+            is_remember: false
+        );
 
         $this->userRepository
             ->method('findOneBy')

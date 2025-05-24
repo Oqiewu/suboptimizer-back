@@ -57,10 +57,11 @@ class LoginUserCaseTest extends TestCase
     {
         $user = $this->createMock(User::class);
 
-        $dto = new LoginRequestDTO();
-        $dto->email = 'test@example.com';
-        $dto->password = 'pass123';
-        $dto->is_remember = true;
+        $dto = new LoginRequestDTO(
+            email: 'test@example.com',
+            password: 'pass123',
+            is_remember: true
+        );
 
         $this->userRepository
             ->method('findOneBy')
@@ -115,10 +116,11 @@ class LoginUserCaseTest extends TestCase
      */
     public function testAuthenticateWithInvalidUser(): void
     {
-        $dto = new LoginRequestDTO();
-        $dto->email = 'notfound@example.com';
-        $dto->password = 'wrong';
-        $dto->is_remember = false;
+        $dto = new LoginRequestDTO(
+            email: 'notfound@example.com',
+            password: 'wrong',
+            is_remember: false
+        );
 
         $this->userRepository
             ->method('findOneBy')
@@ -140,10 +142,11 @@ class LoginUserCaseTest extends TestCase
     {
         $user = $this->createMock(User::class);
 
-        $dto = new LoginRequestDTO();
-        $dto->email = 'test@example.com';
-        $dto->password = 'wrongpass';
-        $dto->is_remember = false;
+        $dto = new LoginRequestDTO(
+            email: 'test@example.com',
+            password: 'wrongpass',
+            is_remember: false
+        );
 
         $this->userRepository
             ->method('findOneBy')

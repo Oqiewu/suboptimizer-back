@@ -6,16 +6,18 @@ namespace App\Controller\Auth\DTO;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class LoginRequestDTO
+readonly class LoginRequestDTO
 {
-    #[Assert\NotBlank]
-    #[Assert\Email]
-    public string $email;
+    public function __construct(
+        #[Assert\NotBlank]
+        #[Assert\Email]
+        public string $email,
 
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 6)]
-    public string $password;
+        #[Assert\NotBlank]
+        #[Assert\Length(min: 6)]
+        public string $password,
 
-    #[Assert\Type("bool")]
-    public bool $is_remember = false;
+        #[Assert\Type("bool")]
+        public bool $is_remember = false
+    ) {}
 }
