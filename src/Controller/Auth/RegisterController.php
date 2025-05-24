@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
-use App\DTO\Auth\RegisterRequestDTO;
-use App\UserCase\Auth\RegisterUserCase;
+use App\Interface\UserCase\RegisterUserCaseInterface;
+use App\Request\Auth\RegisterRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -15,15 +15,15 @@ use Symfony\Component\Routing\Annotation\Route;
 final class RegisterController extends AbstractController
 {
     public function __construct(
-        private readonly RegisterUserCase $registerUserCase,
+        private readonly RegisterUserCaseInterface $registerUserCase,
     ) {}
 
     #[Route('/register', name: 'auth_register', methods: ['POST'])]
     public function __invoke(
-        #[MapRequestPayload] RegisterRequestDTO $dto,
+        #[MapRequestPayload] RegisterRequest $registerRequest,
     ): JsonResponse {
         try {
-            $result = $this->registerUserCase->register($dto);
+            $result = $this->registerUserCase->register($registerRequest);
             $now = new \DateTimeImmutable();
 
             return $this->json([
@@ -32,12 +32,12 @@ final class RegisterController extends AbstractController
                 'result' => [
                     'accessToken' => [
                         'token' => $result['accessToken'],
-                        'createdAt' => $now->format('Y-m-d H:i:s'),
+                        'created_at' => $now->format('Y-m-d H:i:s'),
                         'ttl' => $result['accessTokenTtl']
                     ],
                     'refreshToken' => [
                         'token' => $result['refreshToken'],
-                        'createdAt' => $now->format('Y-m-d H:i:s'),
+                        'created_at' => $now->format('Y-m-d H:i:s'),
                         'ttl' => $result['refreshTokenTtl'],
                     ],
                 ],

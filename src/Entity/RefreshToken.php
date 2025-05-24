@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\RefreshTokenRepository;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: RefreshTokenRepository::class)]
 #[ORM\Table(name: 'refresh_token')]
@@ -24,8 +25,8 @@ class RefreshToken
 
     #[ORM\ManyToOne(targetEntity: 'App\Entity\User')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private User $user;
-    public function __construct(User $user, string $token, \DateTime $validAt)
+    private UserInterface $user;
+    public function __construct(UserInterface $user, string $token, \DateTime $validAt)
     {
         $this->user = $user;
         $this->token = $token;
@@ -57,7 +58,7 @@ class RefreshToken
         $this->validAt = $validAt;
     }
 
-    public function getUser(): User
+    public function getUser(): UserInterface
     {
         return $this->user;
     }

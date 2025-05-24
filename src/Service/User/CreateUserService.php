@@ -10,6 +10,7 @@ use App\Interface\Service\User\CreateUserServiceInterface;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 readonly final class CreateUserService implements CreateUserServiceInterface
 {
@@ -21,7 +22,7 @@ readonly final class CreateUserService implements CreateUserServiceInterface
     /**
      * @throws ConflictHttpException
      */
-    public function createUser(CreateUserDTOInterface $createUserDTO): User
+    public function createUser(CreateUserDTOInterface $createUserDTO): UserInterface
     {
         if ($this->userRepository->findOneBy(['email' => $createUserDTO->getEmail()])) {
             throw new ConflictHttpException('User already exists.');

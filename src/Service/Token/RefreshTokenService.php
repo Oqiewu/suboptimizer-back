@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Service\Token;
 
 use App\Entity\RefreshToken;
-use App\Entity\User;
 use App\Interface\Service\Token\RefreshTokenServiceInterface;
 use App\Repository\RefreshTokenRepository;
 use DateMalformedStringException;
@@ -13,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Random\RandomException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 readonly final class RefreshTokenService implements RefreshTokenServiceInterface
 {
@@ -23,13 +23,10 @@ readonly final class RefreshTokenService implements RefreshTokenServiceInterface
     ) {}
 
     /**
-     * @param User $user
-     * @param int $refreshTtl
-     * @return string
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function createRefreshToken(User $user, int $refreshTtl): string
+    public function createRefreshToken(UserInterface $user, int $refreshTtl): string
     {
         $this->removeExistingRefreshToken($user);
 
@@ -60,7 +57,7 @@ readonly final class RefreshTokenService implements RefreshTokenServiceInterface
         return $this->JWTTokenManager->create($user);
     }
 
-    private function removeExistingRefreshToken(User $user): void
+    private function removeExistingRefreshToken(UserInterface $user): void
     {
         $token = $this->refreshTokenRepository->findOneBy(['user' => $user]);
 

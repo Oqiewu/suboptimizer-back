@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Interface\Service\Token;
 
-use App\Entity\User;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 interface RefreshTokenServiceInterface
 {
-    public function createRefreshToken(User $user, int $refreshTtl): string;
+    public function createRefreshToken(UserInterface $user, int $refreshTtl): string;
     public function refreshAccessToken(string $refreshToken): string;
 }
