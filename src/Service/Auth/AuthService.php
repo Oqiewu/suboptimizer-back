@@ -6,10 +6,10 @@ namespace App\Service\Auth;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class AuthService
+readonly final class AuthService
 {
     public function __construct(
-        private readonly ParameterBagInterface $parameterBag,
+        private ParameterBagInterface $parameterBag,
     )
     {}
 

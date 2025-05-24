@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Token;
 
-use App\Service\RefreshTokenService;
+use App\Service\Token\RefreshTokenService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

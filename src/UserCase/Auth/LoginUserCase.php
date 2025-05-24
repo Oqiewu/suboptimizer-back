@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace App\UserCase\Auth;
 
-use App\Controller\Auth\DTO\LoginRequestDTO;
+use App\DTO\Auth\LoginRequestDTO;
 use App\Repository\UserRepository;
 use App\Service\Auth\AuthService;
-use App\Service\RefreshTokenService;
+use App\Service\Token\RefreshTokenService;
+use DateMalformedStringException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Random\RandomException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Random\RandomException;
-use DateMalformedStringException;
 
-class LoginUserCase
+readonly final class LoginUserCase
 {
     public function __construct(
-        private readonly AuthService $authService,
-        private readonly RefreshTokenService $refreshTokenService,
-        private readonly UserRepository $userRepository,
-        private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly JWTTokenManagerInterface $JWTTokenManager,
+        private AuthService $authService,
+        private RefreshTokenService $refreshTokenService,
+        private UserRepository $userRepository,
+        private UserPasswordHasherInterface $passwordHasher,
+        private JWTTokenManagerInterface $JWTTokenManager,
     ){}
 
     /**

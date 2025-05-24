@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
-use App\Controller\Auth\DTO\RegisterRequestDTO;
+use App\DTO\Auth\RegisterRequestDTO;
 use App\UserCase\Auth\RegisterUserCase;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
