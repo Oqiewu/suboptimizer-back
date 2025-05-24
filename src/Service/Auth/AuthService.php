@@ -13,13 +13,6 @@ readonly final class AuthService
     )
     {}
 
-    public function getRefreshTtl(bool $isRemember): int
-    {
-        return $isRemember
-            ? $this->parameterBag->get('gesdinet_jwt_refresh_token.ttl')
-            : $this->parameterBag->get('lexik_jwt_authentication.token_ttl');
-    }
-
     public function collectResponseArray(string $accessToken, string $refreshToken, int $refreshTtl): array
     {
         return [

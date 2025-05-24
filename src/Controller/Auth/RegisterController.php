@@ -24,10 +24,23 @@ final class RegisterController extends AbstractController
     ): JsonResponse {
         try {
             $result = $this->registerUserCase->register($dto);
+            $now = new \DateTimeImmutable();
+
             return $this->json([
                 'code' => 201,
                 'message' => 'User registered successfully.',
-                'result' => $result,
+                'result' => [
+                    'accessToken' => [
+                        'token' => $result['accessToken'],
+                        'createdAt' => $now->format('Y-m-d H:i:s'),
+                        'ttl' => $result['accessTokenTtl']
+                    ],
+                    'refreshToken' => [
+                        'token' => $result['refreshToken'],
+                        'createdAt' => $now->format('Y-m-d H:i:s'),
+                        'ttl' => $result['refreshTokenTtl'],
+                    ],
+                ],
             ], 201);
         } catch (\Throwable $e) {
             return $this->json([

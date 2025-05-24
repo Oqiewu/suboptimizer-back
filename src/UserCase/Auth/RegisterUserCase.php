@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\UserCase\Auth;
 
 use App\DTO\Auth\RegisterRequestDTO;
+use App\Interface\Service\Token\TokenTtlProviderInterface;
 use App\Interface\Service\User\CreateUserServiceInterface;
-use App\Service\Auth\AuthService;
-use App\Service\Token\RefreshTokenService;
+use App\Interface\Service\Token\RefreshTokenServiceInterface;
 use DateMalformedStringException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Random\RandomException;
@@ -18,8 +18,8 @@ readonly final class RegisterUserCase
     public function __construct(
         private CreateUserServiceInterface $createUserService,
         private JWTTokenManagerInterface $JWTTokenManager,
-        private RefreshTokenService $refreshTokenService,
-        private AuthService $authService,
+        private RefreshTokenServiceInterface $refreshTokenService,
+        private TokenTtlProviderInterface $tokenTtlProvider,
     ) {}
 
     /**
@@ -31,10 +31,16 @@ readonly final class RegisterUserCase
     {
         $user = $this->createUserService->createUser($registerRequestDTO);
 
-        $refreshTtl = $this->authService->getRefreshTtl($registerRequestDTO->isRemember());
-        $accessToken = $this->JWTTokenManager->create($user);
-        $refreshToken = $this->refreshTokenService->createRefreshToken($user, $refreshTtl);
+        $refreshTokenTtl = $this->tokenTtlProvider->getRefreshTtl($registerRequestDTO->isRemember());
+        $accessTokenTtl  = $this->tokenTtlProvider->getAccessTtl();
+        $accessToken     = $this->JWTTokenManager->create($user);
+        $refreshToken    = $this->refreshTokenService->createRefreshToken($user, $refreshTokenTtl);
 
-        return $this->authService->collectResponseArray($accessToken, $refreshToken, $refreshTtl);
+        return [
+            'accessToken' => $accessToken,
+            'accessTokenTtl' => $accessTokenTtl,
+            'refreshToken' => $refreshToken,
+            'refreshTokenTtl' => $refreshTokenTtl,
+        ];
     }
 }

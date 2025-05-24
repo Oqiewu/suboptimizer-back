@@ -6,6 +6,7 @@ namespace App\Service\Token;
 
 use App\Entity\RefreshToken;
 use App\Entity\User;
+use App\Interface\Service\Token\RefreshTokenServiceInterface;
 use App\Repository\RefreshTokenRepository;
 use DateMalformedStringException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,7 +14,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Random\RandomException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
-readonly final class RefreshTokenService
+readonly final class RefreshTokenService implements RefreshTokenServiceInterface
 {
     public function __construct(
         private JWTTokenManagerInterface $JWTTokenManager,
