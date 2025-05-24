@@ -14,6 +14,9 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use PHPUnit\Framework\MockObject\Exception;
+use DateMalformedStringException;
+use \Random\RandomException;
 
 class LoginUserCaseTest extends TestCase
 {
@@ -25,6 +28,9 @@ class LoginUserCaseTest extends TestCase
 
     private LoginUserCase $loginUserCase;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->authService = $this->createMock(AuthService::class);
@@ -42,6 +48,11 @@ class LoginUserCaseTest extends TestCase
         );
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws Exception
+     * @throws RandomException
+     */
     public function testAuthenticateSuccess(): void
     {
         $user = $this->createMock(User::class);
@@ -103,6 +114,10 @@ class LoginUserCaseTest extends TestCase
         $this->assertEquals('jwt.token.here', $response['accessToken']['token']);
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public function testAuthenticateWithInvalidUser(): void
     {
         $dto = new LoginRequestDTO();
@@ -121,6 +136,11 @@ class LoginUserCaseTest extends TestCase
         $this->loginUserCase->authenticate($dto);
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws Exception
+     * @throws RandomException
+     */
     public function testAuthenticateWithInvalidPassword(): void
     {
         $user = $this->createMock(User::class);

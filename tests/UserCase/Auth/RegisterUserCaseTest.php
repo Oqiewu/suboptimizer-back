@@ -15,6 +15,10 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use PHPUnit\Framework\MockObject\Exception;
+use DateMalformedStringException;
+use \Random\RandomException;
+use Throwable;
 
 class RegisterUserCaseTest extends TestCase
 {
@@ -26,6 +30,9 @@ class RegisterUserCaseTest extends TestCase
     private $authService;
     private $userCase;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
@@ -45,6 +52,9 @@ class RegisterUserCaseTest extends TestCase
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testRegisterSuccess(): void
     {
         $dto = new RegisterRequestDTO();
@@ -109,6 +119,9 @@ class RegisterUserCaseTest extends TestCase
         $this->assertEquals(3600, $result['expires_in']);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testRegisterUserAlreadyExists(): void
     {
         $dto = new RegisterRequestDTO();
@@ -130,6 +143,9 @@ class RegisterUserCaseTest extends TestCase
         $this->userCase->register($dto);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testRegisterWithExceptionDuringFlush(): void
     {
         $dto = new RegisterRequestDTO();

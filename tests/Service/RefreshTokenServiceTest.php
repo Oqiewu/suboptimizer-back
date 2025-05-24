@@ -12,6 +12,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use PHPUnit\Framework\MockObject\Exception;
+use Random\RandomException;
+use DateMalformedStringException;
 
 class RefreshTokenServiceTest extends TestCase
 {
@@ -20,6 +23,9 @@ class RefreshTokenServiceTest extends TestCase
     private RefreshTokenRepository $refreshTokenRepository;
     private RefreshTokenService $service;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->jwtTokenManager = $this->createMock(JWTTokenManagerInterface::class);
@@ -33,6 +39,10 @@ class RefreshTokenServiceTest extends TestCase
         );
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public function testCreateRefreshToken(): void
     {
         $user = new User();
@@ -42,9 +52,12 @@ class RefreshTokenServiceTest extends TestCase
         $token = $this->service->createRefreshToken($user, 3600);
 
         $this->assertIsString($token);
-        $this->assertEquals(128, strlen($token)); // 64 байта * 2 hex
+        $this->assertEquals(128, strlen($token));
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function testRefreshAccessTokenSuccess(): void
     {
         $user = new User();
@@ -64,6 +77,9 @@ class RefreshTokenServiceTest extends TestCase
         $this->assertEquals('access_token', $result);
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function testRefreshAccessTokenFailsIfExpired(): void
     {
         $user = new User();
