@@ -11,6 +11,8 @@ use App\Service\RefreshTokenService;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Random\RandomException;
+use DateMalformedStringException;
 
 class LoginUserCase
 {
@@ -25,8 +27,8 @@ class LoginUserCase
     /**
      * @param LoginRequestDTO $loginRequestDTO
      * @return array
-     * @throws \DateMalformedStringException
-     * @throws \Random\RandomException
+     * @throws DateMalformedStringException
+     * @throws RandomException
      */
     public function authenticate(LoginRequestDTO $loginRequestDTO): array
     {
@@ -39,7 +41,6 @@ class LoginUserCase
         $refreshTtl = $this->authService->getRefreshTtl($loginRequestDTO->is_remember);
         $accessToken = $this->JWTTokenManager->create($user);
 
-        $this->refreshTokenService->removeExistingRefreshToken($user);
         $refreshToken = $this->refreshTokenService->createRefreshToken($user, $refreshTtl);
 
         return $this->authService->collectResponseArray($accessToken, $refreshToken, $refreshTtl);

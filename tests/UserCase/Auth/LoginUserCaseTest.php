@@ -83,11 +83,6 @@ class LoginUserCaseTest extends TestCase
             ->willReturn('jwt.token.here');
 
         $this->refreshTokenService
-            ->expects($this->once())
-            ->method('removeExistingRefreshToken')
-            ->with($user);
-
-        $this->refreshTokenService
             ->method('createRefreshToken')
             ->with($user, 3600)
             ->willReturn('refresh.token.here');

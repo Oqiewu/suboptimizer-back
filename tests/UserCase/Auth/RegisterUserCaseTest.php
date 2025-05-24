@@ -95,10 +95,6 @@ class RegisterUserCaseTest extends TestCase
 
         $this->refreshTokenService
             ->expects($this->once())
-            ->method('removeExistingRefreshToken');
-
-        $this->refreshTokenService
-            ->expects($this->once())
             ->method('createRefreshToken')
             ->willReturn('refresh_token');
 

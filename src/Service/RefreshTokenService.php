@@ -30,6 +30,8 @@ class RefreshTokenService
      */
     public function createRefreshToken(User $user, int $refreshTtl): string
     {
+        $this->removeExistingRefreshToken($user);
+
         $validAt = new \DateTime();
         $validAt->modify('+' . $refreshTtl . ' seconds');
 
@@ -43,10 +45,6 @@ class RefreshTokenService
     }
 
     /**
-     * Обновление access token с использованием refresh token
-     *
-     * @param string $refreshToken
-     * @return string
      * @throws BadCredentialsException
      */
     public function refreshAccessToken(string $refreshToken): string
@@ -61,7 +59,7 @@ class RefreshTokenService
         return $this->JWTTokenManager->create($user);
     }
 
-    public function removeExistingRefreshToken(User $user): void
+    private function removeExistingRefreshToken(User $user): void
     {
         $token = $this->refreshTokenRepository->findOneBy(['user' => $user]);
 

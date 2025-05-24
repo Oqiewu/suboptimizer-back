@@ -102,35 +102,4 @@ class RefreshTokenServiceTest extends TestCase
         $this->expectException(BadCredentialsException::class);
         $this->service->refreshAccessToken('token');
     }
-
-    public function testRemoveExistingRefreshToken(): void
-    {
-        $user = new User();
-        $token = new RefreshToken($user, 'token', new \DateTime());
-
-        $this->refreshTokenRepository
-            ->method('findOneBy')
-            ->with(['user' => $user])
-            ->willReturn($token);
-
-        $this->entityManager->expects($this->once())->method('remove')->with($token);
-        $this->entityManager->expects($this->once())->method('flush');
-
-        $this->service->removeExistingRefreshToken($user);
-    }
-
-    public function testRemoveExistingRefreshTokenWhenNotFound(): void
-    {
-        $user = new User();
-
-        $this->refreshTokenRepository
-            ->method('findOneBy')
-            ->with(['user' => $user])
-            ->willReturn(null);
-
-        $this->entityManager->expects($this->never())->method('remove');
-        $this->entityManager->expects($this->never())->method('flush');
-
-        $this->service->removeExistingRefreshToken($user);
-    }
 }

@@ -13,6 +13,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Throwable;
+use Random\RandomException;
+use DateMalformedStringException;
 
 class RegisterUserCase
 {
@@ -25,6 +28,11 @@ class RegisterUserCase
         private readonly AuthService $authService,
     ) {}
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     * @throws Throwable
+     */
     public function register(RegisterRequestDTO $dto): array
     {
         if ($this->userRepository->findOneBy(['email' => $dto->email])) {
@@ -46,7 +54,6 @@ class RegisterUserCase
             $refreshTtl = $this->authService->getRefreshTtl($dto->is_remember);
             $accessToken = $this->JWTTokenManager->create($user);
 
-            $this->refreshTokenService->removeExistingRefreshToken($user);
             $refreshToken = $this->refreshTokenService->createRefreshToken($user, $refreshTtl);
 
             return $this->authService->collectResponseArray($accessToken, $refreshToken, $refreshTtl);
