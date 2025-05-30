@@ -14,7 +14,7 @@ readonly final class TokenTtlProvider implements TokenTtlProviderInterface
     public function getRefreshTtl(bool $isRemember): int
     {
         return $isRemember
-            ? $this->params->get('gesdinet_jwt_refresh_token.ttl')
+            ? $this->params->get('jwt_refresh_token.ttl')
             : $this->params->get('lexik_jwt_authentication.token_ttl');
     }
 

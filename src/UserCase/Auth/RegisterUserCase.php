@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\UserCase\Auth;
 
 use App\Interface\Request\RegisterRequestInterface;
+use App\Interface\Response\ResponseInterface;
 use App\Interface\Service\Token\RefreshTokenServiceInterface;
 use App\Interface\Service\Token\TokenTtlProviderInterface;
 use App\Interface\Service\User\CreateUserServiceInterface;
 use App\Interface\UserCase\RegisterUserCaseInterface;
-use App\Request\Auth\RegisterRequest;
+use App\Response\TokenResponse;
 use DateMalformedStringException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Random\RandomException;
@@ -29,22 +30,24 @@ readonly final class RegisterUserCase implements RegisterUserCaseInterface
      * @throws RandomException
      * @throws Throwable
      */
-    public function register(RegisterRequestInterface $registerRequest): array
+    public function register(RegisterRequestInterface $registerRequest): ResponseInterface
     {
         $createUserDTO = $registerRequest->toDTO();
-
         $user = $this->createUserService->createUser($createUserDTO);
 
-        $refreshTokenTtl = $this->tokenTtlProvider->getRefreshTtl($registerRequest->isRemember());
-        $accessTokenTtl  = $this->tokenTtlProvider->getAccessTtl();
-        $accessToken     = $this->JWTTokenManager->create($user);
-        $refreshToken    = $this->refreshTokenService->createRefreshToken($user, $refreshTokenTtl);
+        $accessToken = $this->JWTTokenManager->create($user);
+        $accessTtl = $this->tokenTtlProvider->getAccessTtl();
 
-        return [
-            'accessToken' => $accessToken,
-            'accessTokenTtl' => $accessTokenTtl,
-            'refreshToken' => $refreshToken,
-            'refreshTokenTtl' => $refreshTokenTtl,
-        ];
+        $refreshTtl = $this->tokenTtlProvider->getRefreshTtl($registerRequest->isRemember());
+        $refreshToken = $this->refreshTokenService->createRefreshToken($user, $refreshTtl);
+
+        return new TokenResponse(
+            accessToken: $accessToken,
+            accessTokenTtl: $accessTtl,
+            refreshToken: $refreshToken,
+            refreshTokenTtl: $refreshTtl,
+            issuedAt: new \DateTimeImmutable(),
+        );
     }
+
 }
