@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\UserCase\Token;
 
 use App\Interface\Request\RefreshTokenRequestInterface;
+use App\Interface\Response\ResponseInterface;
 use App\Interface\Service\Token\RefreshTokenServiceInterface;
 use App\Interface\Service\Token\TokenTtlProviderInterface;
 use App\UserCase\Token\RefreshTokenUserCase;
@@ -45,9 +46,23 @@ final class RefreshTokenUserCaseTest extends TestCase
 
         $result = $userCase->refreshAccessToken($refreshTokenRequest);
 
-        $this->assertSame([
-            'accessToken' => $newAccessToken,
-            'accessTokenTtl' => $ttl,
-        ], $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+
+        $resultArray = $result->toArray();
+
+        $expected = [
+            'accessToken' => [
+                'token' => $newAccessToken,
+                'created_at' => $resultArray['accessToken']['created_at'],
+                'ttl' => $ttl,
+            ],
+        ];
+
+        $this->assertEquals($expected, $resultArray);
+
+        $this->assertMatchesRegularExpression(
+            '/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/',
+            $result->toArray()['accessToken']['created_at']
+        );
     }
 }

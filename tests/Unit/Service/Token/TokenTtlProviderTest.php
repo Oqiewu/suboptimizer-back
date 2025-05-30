@@ -41,7 +41,7 @@ final class TokenTtlProviderTest extends TestCase
         $params
             ->expects($this->once())
             ->method('get')
-            ->with('gesdinet_jwt_refresh_token.ttl')
+            ->with('jwt_refresh_token.ttl')
             ->willReturn($expectedTtl);
 
         $provider = new TokenTtlProvider($params);

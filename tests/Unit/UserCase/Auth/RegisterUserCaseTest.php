@@ -9,6 +9,7 @@ use App\Interface\Request\RegisterRequestInterface;
 use App\Interface\Service\Token\RefreshTokenServiceInterface;
 use App\Interface\Service\Token\TokenTtlProviderInterface;
 use App\Interface\Service\User\CreateUserServiceInterface;
+use App\Interface\Response\ResponseInterface;
 use App\UserCase\Auth\RegisterUserCase;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +30,7 @@ final class RegisterUserCaseTest extends TestCase
     public function testRegister(): void
     {
         $dto = $this->createMock(CreateUserDTOInterface::class);
-        $user = $this->createMock(UserInterface::class);;
+        $user = $this->createMock(UserInterface::class);
         $accessToken = 'access_token';
         $refreshToken = 'refresh_token';
         $accessTtl = 43200;
@@ -88,11 +89,30 @@ final class RegisterUserCaseTest extends TestCase
 
         $result = $userCase->register($registerRequest);
 
-        $this->assertSame([
-            'accessToken' => $accessToken,
-            'accessTokenTtl' => $accessTtl,
-            'refreshToken' => $refreshToken,
-            'refreshTokenTtl' => $refreshTtl,
-        ], $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+
+        $expected = [
+            'accessToken' => [
+                'token' => $accessToken,
+                'created_at' => $result->toArray()['accessToken']['created_at'],
+                'ttl' => $accessTtl,
+            ],
+            'refreshToken' => [
+                'token' => $refreshToken,
+                'created_at' => $result->toArray()['refreshToken']['created_at'],
+                'ttl' => $refreshTtl,
+            ],
+        ];
+
+        $this->assertEquals($expected, $result->toArray());
+
+        $this->assertMatchesRegularExpression(
+            '/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/',
+            $result->toArray()['accessToken']['created_at']
+        );
+        $this->assertMatchesRegularExpression(
+            '/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/',
+            $result->toArray()['refreshToken']['created_at']
+        );
     }
 }
