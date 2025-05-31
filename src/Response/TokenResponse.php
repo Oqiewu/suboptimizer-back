@@ -6,14 +6,14 @@ namespace App\Response;
 
 use App\Interface\Response\ResponseInterface;
 
-final class TokenResponse implements ResponseInterface
+readonly final class TokenResponse implements ResponseInterface
 {
     public function __construct(
-        private readonly string $accessToken,
-        private readonly int $accessTokenTtl,
-        private readonly string $refreshToken,
-        private readonly int $refreshTokenTtl,
-        private readonly \DateTimeImmutable $issuedAt,
+        private string $accessToken,
+        private int $accessTokenTtl,
+        private string $refreshToken,
+        private int $refreshTokenTtl,
+        private \DateTimeImmutable $issuedAt,
     ) {}
 
     public function toArray(): array
