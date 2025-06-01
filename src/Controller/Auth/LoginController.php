@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
-use App\Interface\UserCase\LoginUserCaseInterface;
-use App\Request\Auth\LoginRequest;
+use App\Request\Auth\Login\LoginRequest;
+use App\UserCase\Auth\Login\LoginUserCase;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 final class LoginController extends AbstractController
 {
     public function __construct(
-        private readonly LoginUserCaseInterface $loginUserCase,
+        private readonly LoginUserCase $loginUserCase,
     ) {}
 
     #[Route('/login', name: 'auth_login', methods: ['POST'])]

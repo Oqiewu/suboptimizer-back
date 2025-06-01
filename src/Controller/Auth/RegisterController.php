@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
-use App\Interface\UserCase\RegisterUserCaseInterface;
-use App\Request\Auth\RegisterRequest;
+use App\Request\Auth\Register\RegisterRequest;
+use App\UserCase\Auth\Register\RegisterUserCase;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 final class RegisterController extends AbstractController
 {
     public function __construct(
-        private readonly RegisterUserCaseInterface $registerUserCase,
+        private readonly RegisterUserCase $registerUserCase,
     ) {}
 
     #[Route('/register', name: 'auth_register', methods: ['POST'])]

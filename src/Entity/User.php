@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Repository\User\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use App\Repository\UserRepository;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -17,50 +17,41 @@ use App\Repository\UserRepository;
 #[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id = null;
+    public function __construct(
+        #[ORM\Column(type: 'string', length: 255, unique: true)]
+        #[Assert\NotBlank]
+        #[Assert\Email]
+        private string $email,
 
-    #[ORM\Column(type: 'string', length: 255, unique: true)]
-    #[Assert\NotBlank]
-    #[Assert\Email]
-    private string $email;
+        #[ORM\Column(name: 'first_name', type: 'string', length: 100)]
+        #[Assert\NotBlank]
+        private string $firstName,
 
-    #[ORM\Column(name: 'avatar_url', type: 'string', length: 512, nullable: true)]
-    #[Assert\NotBlank]
-    private string $avatarUrl;
+        #[ORM\Column(name: 'last_name', type: 'string', length: 100)]
+        #[Assert\NotBlank]
+        private string $lastName,
 
-    #[ORM\Column(name: 'first_name', type: 'string', length: 100)]
-    #[Assert\NotBlank]
-    private string $firstName;
+        #[ORM\Column(type: 'string', length: 255)]
+        #[Assert\NotBlank]
+        private string $password,
 
-    #[ORM\Column(name: 'last_name', type: 'string', length: 100)]
-    #[Assert\NotBlank]
-    private string $lastName;
+        #[ORM\Column(type: 'array')]
+        private array $roles = ['ROLE_USER'],
 
-    #[ORM\Column(type: 'string', length: 255)]
-    #[Assert\NotBlank]
-    private string $password;
+        #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
+        private readonly \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
 
-    /**
-     * @var array<string>
-     */
-    #[ORM\Column(type: 'json')]
-    private array $roles = [];
+        #[ORM\Column(name: 'updated_at', type: 'datetime_immutable')]
+        private \DateTimeImmutable $updatedAt = new \DateTimeImmutable(),
 
-    #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
-    private \DateTimeImmutable $createdAt;
+        #[ORM\Column(name: 'avatar_url', type: 'string', length: 512, nullable: true)]
+        private ?string $avatarUrl = null,
 
-    #[ORM\Column(name: 'updated_at', type: 'datetime_immutable')]
-    private \DateTimeImmutable $updatedAt;
-
-    public function __construct()
-    {
-        $this->roles = ['ROLE_USER'];
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-    }
+        #[ORM\Id]
+        #[ORM\GeneratedValue]
+        #[ORM\Column(type: 'integer')]
+        private ?int $id = null,
+    ) {}
 
     public function getId(): ?int
     {
@@ -75,7 +66,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -87,7 +77,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatarUrl(string $avatarUrl): self
     {
         $this->avatarUrl = $avatarUrl;
-
         return $this;
     }
 
@@ -99,7 +88,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setFirstName(string $firstName): self
     {
         $this->firstName = $firstName;
-
         return $this;
     }
 
@@ -111,7 +99,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastName(string $lastName): self
     {
         $this->lastName = $lastName;
-
         return $this;
     }
 
@@ -127,33 +114,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return array<string>
-     */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return array_unique([...$this->roles, 'ROLE_USER']);
     }
 
-    /**
-     * @param array<string> $roles
-     */
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
-
         return $this;
     }
 
-    /**
-     * The public representation of the user (e.g. a username, an email address, etc.)
-     *
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
         return $this->email;
